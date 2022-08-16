@@ -1,7 +1,7 @@
 // Utility Logic
 
-function isEmpty(textString) {
-  return(testString.trim().length === 0);
+function isEmpty(testString) {
+  return (testString.trim().length === 0);
 }
 
 // Business Logic
@@ -34,27 +34,19 @@ function numberOfOccurrencesInText(word, text) {
   return wordCount;
 }
 
-function boldPassage(word, text) {
-  if (isEmpty(word) || isEmpty(text)) {
-    return null;
+function outputOrganization(word, text) {
+  if (isEmpty(word)) {
+    return 0;
   }
-  const p = document.createElement("p");
-  let textArray = text.split(" ");
-  textArray.forEach(function(element) {
-  if (word === element) {
-    const bold = document.createElement("strong");
-    bold.append(element);
-    p.append(bold);
-  } else {
-    p.append(element);
-  }
-  if (index !== (textArray.length - 1)) {
-  p.append(" ");
+  const textArray = text.split(" ");
+  let wordCount = 0;
+  textArray.forEach(function(element){
+  if (element.toLowerCase().includes(word.toLowerCase())) {
+    wordCount++;
   }
 });
-  return p;
+  return wordCount;
 }
-
 
 // function omitsOffensiveWords(word, text) {
 //   const textArray = text.split(" ");
@@ -71,7 +63,28 @@ function boldPassage(word, text) {
 
 // UI Logic
 
-function handleFormSubmission(event) {
+function boldPassage(word, text) {
+  if (isEmpty(word) || isEmpty(text)) {
+    return null;
+  }
+  const p = document.createElement("p");
+  let textArray = text.split(" ");
+  textArray.forEach(function(element, index) {
+  if (word === element) {
+    const bold = document.createElement("strong");
+    bold.append(element);
+    p.append(bold);
+  } else {
+    p.append(element);
+  }
+  if (index !== (textArray.length - 1)) {
+  p.append(" ");
+  }
+});
+  return p;
+}
+
+function handleFormSubmission() {
   event.preventDefault();
   const passage = document.getElementById("text-passage").value;
   const word = document.getElementById("word").value;
@@ -79,9 +92,15 @@ function handleFormSubmission(event) {
   const occurrencesOfWord = numberOfOccurrencesInText(word, passage);
   document.getElementById("total-count").innerText = wordCount;
   document.getElementById("selected-count").innerText = occurrencesOfWord;
+  let boldedPassage = boldPassage(word, passage);
+  if (boldedPassage) {
+    document.querySelector("div#bolded-passage").append(boldedPassage);
+  } else {
+    document.querySelector("div#bolded-passage").innerText = null;
+  }
 }
 
+
 window.addEventListener("load", function() {
-  const form = document.getElementById("word-counter");
   document.querySelector("form#word-counter").addEventListener("submit", handleFormSubmission);
 });
